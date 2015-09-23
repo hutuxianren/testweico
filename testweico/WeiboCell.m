@@ -111,10 +111,6 @@
     //微博发布来源
     sourceLabel.frame=CGRectMake(160, 25, 150, 15);
     sourceLabel.text=[UIUtils spilt:_weiboModel.source];
-    
-
-    
-
     //微博视图_weiboView
     _weiboView.weiboModel = _weiboModel;
     CGFloat h = [WeiboView getWeiboViewHeight:_weiboModel isRepost:NO isDetail:NO];

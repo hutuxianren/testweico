@@ -10,18 +10,15 @@
 #import "WeiboModel.h"
 #import "RCLabel.h"
 #import "PhotoView.h"
-//#import "RTLabel.h"
 #define kWeibo_Width_List  300 //微博在列表中的宽度
 #define kWeibo_Width_Detail 300     //微博在详情页面的宽度
 
 @interface WeiboView : UIView<RTLabelDelegate>
 {
-    @private
-    //RTLabel          *_textLabel;//微博内容
+@private
     RCLabel          *_rcTextLabel;
     UIImageView      *image;//微博图片
     UIImageView      *repostBackgroundView;//转发的视图
-
     PhotoView *_photoView;
 }
 @property(nonatomic,strong)WeiboModel *weiboModel;//微博模型对象
@@ -30,8 +27,6 @@
 //微博视图是否显示在详情页面
 @property(nonatomic,assign)BOOL isDetail;
 @property(nonatomic,strong)NSMutableString *parseText;//替换为html的结果
-@property(nonatomic,strong)NSMutableArray *imageViews;//图片集合
-
 //计算微博视图的高度
 +(CGFloat)getWeiboViewHeight:(WeiboModel*)weiboModel isRepost:(BOOL)isRepost isDetail:(BOOL)isDetail;
 //获取字体大小

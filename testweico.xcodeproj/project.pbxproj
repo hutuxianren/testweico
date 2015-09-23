@@ -749,7 +749,6 @@
 		F6B9EAC11BA91A240033922D /* UIViewExt.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B9EAC01BA91A240033922D /* UIViewExt.m */; };
 		F6B9EAC41BA91C1B0033922D /* UIUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B9EAC31BA91C1B0033922D /* UIUtils.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		F6B9EAC71BA91CA50033922D /* WXHLGlobalUICommon.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B9EAC61BA91CA50033922D /* WXHLGlobalUICommon.m */; };
-		F6C396CF1BA98679002C01A8 /* myWeiboCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F6C396CE1BA98679002C01A8 /* myWeiboCell.m */; };
 		F6D9FC441BAAAD5000A3A32D /* libSDWebImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6D9FC431BAAAD5000A3A32D /* libSDWebImage.a */; };
 		F6EB694B1BA67524008DB6E4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F6EB694A1BA67524008DB6E4 /* main.m */; };
 		F6EB694E1BA67524008DB6E4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F6EB694D1BA67524008DB6E4 /* AppDelegate.m */; };
@@ -1559,8 +1558,6 @@
 		F6B9EAC31BA91C1B0033922D /* UIUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIUtils.m; sourceTree = "<group>"; };
 		F6B9EAC51BA91CA50033922D /* WXHLGlobalUICommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WXHLGlobalUICommon.h; sourceTree = "<group>"; };
 		F6B9EAC61BA91CA50033922D /* WXHLGlobalUICommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WXHLGlobalUICommon.m; sourceTree = "<group>"; };
-		F6C396CD1BA98679002C01A8 /* myWeiboCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myWeiboCell.h; sourceTree = "<group>"; };
-		F6C396CE1BA98679002C01A8 /* myWeiboCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = myWeiboCell.m; sourceTree = "<group>"; };
 		F6D9FC431BAAAD5000A3A32D /* libSDWebImage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDWebImage.a; path = "Pods/../build/Debug-iphoneos/libSDWebImage.a"; sourceTree = "<group>"; };
 		F6EB69451BA67524008DB6E4 /* testweico.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = testweico.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6EB69491BA67524008DB6E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1855,8 +1852,6 @@
 				F6B9E5211BA904980033922D /* WeiboCell.m */,
 				F6B9E5231BA904D30033922D /* WeiboView.h */,
 				F6B9E5241BA904D30033922D /* WeiboView.m */,
-				F6C396CD1BA98679002C01A8 /* myWeiboCell.h */,
-				F6C396CE1BA98679002C01A8 /* myWeiboCell.m */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -3570,7 +3565,6 @@
 				F68BB7321BAD44B000C1E5C2 /* RCLabel.m in Sources */,
 				F6B9E5221BA904980033922D /* WeiboCell.m in Sources */,
 				F60560EE1BADAFD40085F67B /* MJRefreshAutoNormalFooter.m in Sources */,
-				F6C396CF1BA98679002C01A8 /* myWeiboCell.m in Sources */,
 				F6EB694E1BA67524008DB6E4 /* AppDelegate.m in Sources */,
 				F60560E91BADAFD40085F67B /* MJRefreshBackFooter.m in Sources */,
 				F60560EB1BADAFD40085F67B /* MJRefreshFooter.m in Sources */,

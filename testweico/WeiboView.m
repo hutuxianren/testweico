@@ -26,38 +26,30 @@
     {
         [self initView];
         _parseText=[NSMutableString string];
-        _imageViews=[NSMutableArray array];
     }
     return  self;
 }
+
 -(void)initView
 {
+    //微博内容初始化
     _rcTextLabel=[[RCLabel alloc]initWithFrame:CGRectZero];
-        _rcTextLabel.delegate=self;
+    _rcTextLabel.delegate=self;
     _rcTextLabel.font=[UIFont systemFontOfSize:14.0f];
-
     [self addSubview:_rcTextLabel];
- 
-//    _textLabel=[[RTLabel alloc]initWithFrame:CGRectZero];
-//    _textLabel.delegate=self;
-//    _textLabel.font=[UIFont systemFontOfSize:14.0f];
-//    _textLabel.linkAttributes=[NSDictionary dictionaryWithObject:@"green" forKey:@"color"];
-//    _textLabel.selectedLinkAttributes=[NSDictionary dictionaryWithObject:@"red" forKey:@"color"];
-//    [self addSubview:_textLabel];
     
     //微博图片
     _photoView = [[PhotoView alloc] initWithFrame:CGRectZero];
     [self addSubview:_photoView];
 
-    
-    
     //转发的背景视图
     repostBackgroundView.image=[UIImage imageNamed:@"timeline_retweet_background.png"];
     UIImage *repostImage=[repostBackgroundView.image stretchableImageWithLeftCapWidth:25 topCapHeight:10];
     repostBackgroundView.image=repostImage;
     [self insertSubview:repostBackgroundView atIndex:0];
 }
-//创建转发视图
+
+#pragma mark 创建转发视图
 -(void)setWeiboModel:(WeiboModel *)weiboModel
 {
     if(_weiboModel!=weiboModel)
@@ -70,15 +62,16 @@
     _repostView.isRepost = YES;
     [self addSubview:_repostView];
     }
-
     [self parseLink];
 }
-
+#pragma mark 正则匹配，将话题，人物昵称，圈人均改成高亮显示
 -(void)parseLink
 {
-    [_parseText setString:@""];
-    NSString *regex=@"(@\\w+)|(#\\w+#)|(http(s)?://([A-Za-z0-9._-]+(/)?)*)";
+    [_parseText setString:@""];//初始化为空，不然信息会叠加
+    NSString *regex=@"(@\\w+)|(#\\w+#)|(http(s)?://([A-Za-z0-9._-]+(/)?)*)";//话题、人物昵称、网址的正则表达式合集
     NSString *userName=@"";
+    
+    //如果是转发的微博，将转发微博的作者@出来高亮显示
     if (_isRepost) {
         
         userName= _weiboModel.user.screen_name;
@@ -90,15 +83,13 @@
         {
             userName=@"";
         }
-        //[_parseText appendString:@"@"];
     }
-    [_parseText appendString:userName];
+    [_parseText appendString:userName];//将转发的微博作者名添加
     NSString *text=_weiboModel.text;
 
     NSArray *array=[text componentsMatchedByRegex:regex];
     for(NSString *part in array)
     {
-       // NSLog(@"%@",part);
         NSString *repels=nil;
         //@对象
         if([part hasPrefix:@"@"])
@@ -115,7 +106,6 @@
         {
             repels=[NSString stringWithFormat:@"<a href='topic://%@'>%@</a>",part,part];
         }
-        
         if(repels!=nil)
         {
            text= [text stringByReplacingOccurrencesOfString:part withString:repels];
@@ -136,7 +126,6 @@
        _rcTextLabel.frame=CGRectMake(10, 10, self.width-20, 20);
     }
     _rcTextLabel.componentsAndPlainText=[RCLabel extractTextStyle:_parseText];
-//    _textLabel.text=_parseText;
     _rcTextLabel.height=_rcTextLabel.optimumSize.height;
     
     //------------2⃣️转发的微博视图
@@ -154,11 +143,10 @@
     
     //-------------3⃣️图片视图
         NSArray *picUrls=_weiboModel.pic_urls;
-
         NSUInteger picNums=picUrls.count;
     if(picNums>0)
     {
-        _photoView.urls=picUrls;
+        _photoView.urls=picUrls;//将urls赋给PhotoView类
         [_photoView setFrame:CGRectMake(10, _rcTextLabel.bottom + 5, 140, 220)];
         _photoView.hidden=NO;
     }
@@ -180,7 +168,8 @@
     
     
 }
-//获得字体大小
+
+#pragma mark 获得微博的不同字体大小
 +(CGFloat)getFontSize:(BOOL)isDetail isRepost:(BOOL)isRepost
 {
     CGFloat fontSize=14.0f;
@@ -199,7 +188,8 @@
     
     return fontSize;
 }
-//计算微博视图的高度
+
+#pragma mark 计算微博视图的高度
 +(CGFloat)getWeiboViewHeight:(WeiboModel *)weiboModel isRepost:(BOOL)isRepost isDetail:(BOOL)isDetail
 {
     CGFloat height=0;
@@ -221,18 +211,13 @@
         
     }
     textLabel.componentsAndPlainText=[RCLabel extractTextStyle:weiboModel.text];
-    //textLabel.text=weiboModel.text;
     height+=textLabel.optimumSize.height+5;
     
     //计算微博图片的高度
     NSArray *picUrls=weiboModel.pic_urls;
     NSUInteger picNums=picUrls.count;
     height += [PhotoView getHeight:picNums];
-//    NSString *thumbnailImage = weiboModel.bmiddle_pic;
-//    if (thumbnailImage != nil && ![@"" isEqualToString:thumbnailImage])
-//    {
-//        height+=(80+10);
-//    }
+
     //计算转发微博视图的高度
     if(weiboModel.retweeted_status!=nil)
     {

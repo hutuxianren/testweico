@@ -5,19 +5,23 @@
 //  Created by luluteam on 15/9/14.
 //  Copyright (c) 2015年 luluteam. All rights reserved.
 //
-
+#define kFULLWEIBODATA   0  //表示获取完整的微博数据
+#define kUPWEIBODATA     1  //表示下拉时获取最新的微博数据
+#define kDOWNWEIBODATA   2  //表示上拉时获取更多的微博数据
+#define kRECENTWEIBODATA 3  //获取之前刷新的微博数据
+#define kWEIBODATAURL    @"https://api.weibo.com/2/statuses/friends_timeline.json"//获取微博数据的地址
 #import "ViewController.h"
-//#import "WeiboSDK.h"
 #import "Global.h"
 #import "AppDelegate.h"
 #import "WeiboModel.h"
 #import "UserModel.h"
 #import "WeiboCell.h"
 #import "WeiboView.h"
-#import "myWeiboCell.h"
 #import "UIUtils.h"
 #import "UIImageView+WebCache.h"
 #import "MJRefresh.h"
+
+
 @interface ViewController ()<UITableViewDataSource,UITableViewDelegate,UIScrollViewDelegate>
 @property (strong, nonatomic) IBOutlet UITableView *weiboTable;
 @property(nonatomic,strong)NSMutableArray *data;
@@ -29,8 +33,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _recordRequest=0;
-    // Do any additional setup after loading the view, typically from a nib.
+    _recordRequest=kFULLWEIBODATA;
     [self setupRefresh];//下拉刷新
     [self setupDownRefresh];//上拉刷新
 }
@@ -60,13 +63,18 @@
     if(self.topWeiboId.length==0)
     {
         NSLog(@"微博为空");
-        [WBHttpRequest requestWithAccessToken:token url:@"https://api.weibo.com/2/statuses/friends_timeline.json" httpMethod:@"GET" params:nil delegate:self withTag:nil];
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        NSString *topweiboId=[defaults objectForKey:@"topWeiboId"];
+            NSMutableDictionary *param=[NSMutableDictionary dictionaryWithObject:  topweiboId forKey:@"max_id"];
+        [WBHttpRequest requestWithAccessToken:token url:kWEIBODATAURL  httpMethod:@"GET" params:param delegate:self withTag:nil];
+        _recordRequest=kRECENTWEIBODATA;//取出之前加载的微博数据
         [control endRefreshing];
         return;
     }
+    //取出比since_id大的数据
     NSMutableDictionary *param=[NSMutableDictionary dictionaryWithObject:self.topWeiboId forKey:@"since_id"];
-    [WBHttpRequest requestWithAccessToken:token url:@"https://api.weibo.com/2/statuses/friends_timeline.json" httpMethod:@"GET" params:param delegate:self withTag:nil];
-    _recordRequest=1;//1表示下拉取数据
+    [WBHttpRequest requestWithAccessToken:token url:kWEIBODATAURL  httpMethod:@"GET" params:param delegate:self withTag:nil];
+    _recordRequest=kUPWEIBODATA;//表示下拉取数据
     [control endRefreshing];
 }
 
@@ -93,8 +101,8 @@
         return;
     }
     NSMutableDictionary *param=[NSMutableDictionary dictionaryWithObject:self.lastWeiboId forKey:@"max_id"];
-    [WBHttpRequest requestWithAccessToken:token url:@"https://api.weibo.com/2/statuses/friends_timeline.json" httpMethod:@"GET" params:param delegate:self withTag:nil];
-    _recordRequest=2;//2表示加载更多数据
+    [WBHttpRequest requestWithAccessToken:token url:kWEIBODATAURL  httpMethod:@"GET" params:param delegate:self withTag:nil];
+    _recordRequest=kDOWNWEIBODATA;//2表示上拉加载更多数据
 }
 
 //登录微博
@@ -115,10 +123,10 @@
     //NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     //NSDictionary *dic=[defaults objectForKey:@"SinaWeiboAuthData"];
     NSString *token=[[NSUserDefaults standardUserDefaults]objectForKey:@"token"];
-    [WBHttpRequest requestWithAccessToken:token url:@"https://api.weibo.com/2/statuses/friends_timeline.json" httpMethod:@"GET" params:nil delegate:self withTag:nil];
+    [WBHttpRequest requestWithAccessToken:token url:kWEIBODATAURL  httpMethod:@"GET" params:nil delegate:self withTag:nil];
     
 }
-//网络加载失败
+#pragma mark 网络加载失败,报出错误原因
 -(void)request:(WBHttpRequest *)request didFailWithError:(NSError *)error
 {
     NSString *title = nil;
@@ -131,11 +139,11 @@
                              otherButtonTitles:nil];
         [alert show];
 }
-//网络加载完成
+#pragma mark 网络加载完成,数据传递
 -(void)request:(WBHttpRequest *)request didFinishLoadingWithResult:(NSString*)result
 {
     //取出完整的微博数据
-    if(_recordRequest==0)
+    if(_recordRequest==kFULLWEIBODATA)
     {
         NSData *data=[result dataUsingEncoding:NSUTF8StringEncoding];
         NSDictionary *dic=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
@@ -155,13 +163,15 @@
             self.lastWeiboId=[lastWeibo.id stringValue];
             WeiboModel *topWeibo=[weibos objectAtIndex:0];
             self.topWeiboId=[topWeibo.id stringValue];
+            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+            [defaults setObject:self.topWeiboId forKey:@"topWeiboId"];
         }
         self.data=weibos;
         self.fullWeibos=weibos;
         [self.weiboTable reloadData];
     }
     //取出下拉刷新后的数据
-    if(_recordRequest==1)
+    if(_recordRequest==kUPWEIBODATA)
     {
         NSData *data=[result dataUsingEncoding:NSUTF8StringEncoding];
         NSDictionary *dic=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
@@ -178,16 +188,18 @@
         {
             WeiboModel *topWeibo=[array objectAtIndex:0];
             self.topWeiboId=[topWeibo.id stringValue];
+            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+            [defaults setObject:self.topWeiboId forKey:@"topWeiboId"];
         }
         [array addObjectsFromArray:self.fullWeibos];
         self.fullWeibos=array;
         self.data=array;
         [_weiboTable reloadData];
-        _recordRequest=0;
+        _recordRequest=kFULLWEIBODATA;
         return;
     }
     //取出上拉加载后的数据
-    if(_recordRequest==2)
+    if(_recordRequest==kDOWNWEIBODATA)
     {
         NSData *data=[result dataUsingEncoding:NSUTF8StringEncoding];
          NSDictionary *dic=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
@@ -200,8 +212,6 @@
                             [array addObject:weibo];
                             NSLog(@"-------%@",weibo);
             }
-
-
         }
         //更新topid
         if(array.count>0)
@@ -212,12 +222,43 @@
         [self.fullWeibos addObjectsFromArray:array];
         self.data=self.fullWeibos;
         [_weiboTable reloadData];
-        _recordRequest=0;
+        _recordRequest=kFULLWEIBODATA;
+        return;
+    }
+    //取出之前的微博数据
+    if(_recordRequest==kRECENTWEIBODATA)
+    {
+        NSData *data=[result dataUsingEncoding:NSUTF8StringEncoding];
+        NSDictionary *dic=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+        NSArray * statuses=[dic objectForKey:@"statuses"];
+        NSMutableArray *array=[NSMutableArray arrayWithCapacity:1000];
+        for(NSDictionary *dic in statuses)
+        {
+            WeiboModel *weibo=[[WeiboModel alloc]initWithDataDic:dic];
+            NSLog(@"-------%@",weibo);
+            [array addObject:weibo];
+        }
+        //更新topid
+        if(array.count>0)
+        {
+            WeiboModel *lastWeibo=[array lastObject];
+            self.lastWeiboId=[lastWeibo.id stringValue];
+            WeiboModel *topWeibo=[array objectAtIndex:0];
+            self.topWeiboId=[topWeibo.id stringValue];
+            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+            [defaults setObject:self.topWeiboId forKey:@"topWeiboId"];
+        }
+        [array addObjectsFromArray:self.fullWeibos];
+        self.fullWeibos=array;
+        self.data=array;
+        [_weiboTable reloadData];
+        _recordRequest=kFULLWEIBODATA;
         return;
     }
 
 }
 
+#pragma MARK table
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return self.data.count;

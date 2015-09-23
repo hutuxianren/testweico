@@ -1,7 +1,7 @@
 //
 //  PhotoView.m
 //  testweico
-//
+//  微博多图显示的UIView类
 //  Created by luluteam on 15/9/22.
 //  Copyright (c) 2015年 luluteam. All rights reserved.
 //
@@ -12,13 +12,6 @@
 CGFloat width = 50.0f;
 CGFloat height = 50.0f;
 CGFloat margin = 5.0f;
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
 -(id)initWithFrame:(CGRect)frame
 {
     self=[super initWithFrame:frame];
@@ -45,24 +38,6 @@ CGFloat margin = 5.0f;
     NSUInteger row = 0;
     int columnCount = (count > 4 ? 3 : 2);
     for (int i = 0; i < count; i++) {
-
-
-//                    NSUInteger X=i%3;
-//                    NSUInteger Y=0;
-//                   if (i<=2) {
-//                        Y=0;
-//                    }
-//                    else if(i<=5)
-//                    {
-//                        Y=1;
-//                    }
-//                    else
-//                    {
-//                        Y=2;
-//                    }
-//
-//        UIImageView *imageView = [[UIImageView alloc] init];
-//        imageView.frame =CGRectMake(50*X, 25+50*Y, 50, 50);
         row = i / columnCount;
         column = i % columnCount;
         
