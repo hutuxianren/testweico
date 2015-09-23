@@ -13,5 +13,6 @@
 @property(nonatomic,strong)NSString *topWeiboId;//最大的微博ID
 @property(nonatomic,strong)NSMutableArray *fullWeibos;//完整的微博列表
 @property(nonatomic)NSUInteger recordRequest;//记录不同请求的数据
+@property(nonatomic,strong)UIImageView *WeiboCountView;//新的微博数目
 @end
 

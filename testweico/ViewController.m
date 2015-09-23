@@ -20,6 +20,7 @@
 #import "UIUtils.h"
 #import "UIImageView+WebCache.h"
 #import "MJRefresh.h"
+#import "UIViewExt.h"
 
 
 @interface ViewController ()<UITableViewDataSource,UITableViewDelegate,UIScrollViewDelegate>
@@ -36,6 +37,7 @@
     _recordRequest=kFULLWEIBODATA;
     [self setupRefresh];//下拉刷新
     [self setupDownRefresh];//上拉刷新
+
 }
 /**
 * 集成下拉刷新
@@ -139,6 +141,47 @@
                              otherButtonTitles:nil];
         [alert show];
 }
+#pragma mark 显示新的微博数目
+-(void)showNewWeiboCount:(NSUInteger)count
+{
+    if(_WeiboCountView==nil)
+    {
+        _WeiboCountView=[[UIImageView alloc]init];
+        _WeiboCountView.image=[UIImage imageNamed:@"timeline_new_status_background.png"];
+        _WeiboCountView.frame=CGRectMake(20, 60, 360, 30);
+        [self.view addSubview:_WeiboCountView];
+        UILabel *label=[[UILabel alloc]initWithFrame:CGRectZero];
+        label.tag=2015;
+        label.textColor=[UIColor blackColor];
+        label.backgroundColor=[UIColor clearColor];
+        [_WeiboCountView addSubview:label];
+
+    }
+    if(count>0)
+    {
+    UILabel *label=(UILabel*)[_WeiboCountView viewWithTag:2015];
+    NSLog(@"%ld条新微博",count);
+    label.text=[NSString stringWithFormat:@"%ld条新微博",count];
+    [label sizeToFit];
+    label.origin=CGPointMake((_WeiboCountView.width-label.width)/2, _WeiboCountView.height-label.height);
+    [UIView animateWithDuration:1 animations:^{
+        _WeiboCountView.top=60;
+    } completion:^(BOOL finished) {
+        if(finished)
+        {
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDelay:0.5];
+        //[UIView setAnimationDuration:0.6];
+        _WeiboCountView.top=-40;
+        [UIView commitAnimations];
+        }
+    }];
+    }
+    else
+    {
+        _WeiboCountView.hidden=YES;
+    }
+}
 #pragma mark 网络加载完成,数据传递
 -(void)request:(WBHttpRequest *)request didFinishLoadingWithResult:(NSString*)result
 {
@@ -183,6 +226,8 @@
             NSLog(@"-------%@",weibo);
             [array addObject:weibo];
         }
+        NSUInteger weiboCount=statuses.count;//刷新的微博数目
+        [self showNewWeiboCount:weiboCount];
         //更新topid
         if(array.count>0)
         {
@@ -283,7 +328,7 @@
         WeiboModel *weibo = [self.data objectAtIndex:indexPath.row];
         CGFloat height = [WeiboView getWeiboViewHeight:weibo isRepost:NO isDetail:NO];
     
-        height += 70;
+        height += 80;
     
         return height;
 }

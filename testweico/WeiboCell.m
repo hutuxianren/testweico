@@ -117,10 +117,10 @@
     _weiboView.frame = CGRectMake(10, nickNameLabel.bottom+20, kWeibo_Width_List, h);
     
     //转发数
-    repostCountLabel.frame=CGRectMake(20, _weiboView.bottom+13, 60, 20);
+    repostCountLabel.frame=CGRectMake(20, _weiboView.bottom+20, 60, 20);
     repostCountLabel.text=[[NSString alloc] initWithFormat:@"转发%@",_weiboModel.reposts_count];
     //评论数
-    commentCountLabel.frame=CGRectMake(150, _weiboView.bottom+13, 60, 20);
+    commentCountLabel.frame=CGRectMake(150, _weiboView.bottom+20, 60, 20);
     commentCountLabel.text=[[NSString alloc]initWithFormat:@"评论%@",_weiboModel.comments_count];
 
 }
